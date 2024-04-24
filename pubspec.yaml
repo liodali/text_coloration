@@ -1,6 +1,6 @@
 name: text_coloration
-description: "A new Flutter package project."
-version: 0.0.1
+description: "search part of the text and colored with color"
+version: 0.1.0
 homepage:
 
 environment:
