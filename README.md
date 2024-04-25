@@ -35,6 +35,6 @@ Add the following to your `pubspec.yaml` file:
 ```
 
 ### Preview
-//https://github.com/liodali/text_coloration/blob/main/preview_ios.png
 
-<img src="https://github.com/liodali/text_coloration/blob/main/preview_ios.png" alt="text coloration flutter example"/>
+
+<img src="https://github.com/liodali/text_coloration/blob/main/preview_ios.png" alt="text coloration flutter example" width="320" />
