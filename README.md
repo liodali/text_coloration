@@ -38,3 +38,8 @@ Add the following to your `pubspec.yaml` file:
 
 
 <img src="https://github.com/liodali/text_coloration/blob/main/preview_ios.png" alt="text coloration flutter example" width="320" />
+
+<br>
+<br>
+
+**Note** I want to give credit to my colleges at Nerium and as well  to thank them to let me use and also helped me to translate the part of their code to dart, they implemented this in our android application 5 years ago or even more 
