@@ -1,38 +1,40 @@
 library text_coloration;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class TextColorationWidget extends StatelessWidget {
   final String text;
-  final String textToColor;
-  final Color textColor;
+  final String textToStyled;
+  final TextStyle searchedTextStyle;
   final TextStyle defaultTextStyleColor;
   final int maxlines;
   final TextDirection textDirection;
   final Size? size;
   final TextScaler? textScaler;
   final StrutStyle? strutStyle;
-  const TextColorationWidget({
+  TextColorationWidget({
     super.key,
     required this.text,
-    required this.textToColor,
-    required this.textColor,
+    required this.textToStyled,
+    required this.searchedTextStyle,
     required this.defaultTextStyleColor,
     this.maxlines = 1,
     this.textDirection = TextDirection.ltr,
     this.size,
     this.textScaler = TextScaler.noScaling,
     this.strutStyle,
-  });
+  }) : assert(defaultTextStyleColor.compareTo(searchedTextStyle) !=
+                RenderComparison.identical ||
+            defaultTextStyleColor.compareTo(searchedTextStyle) !=
+                RenderComparison.layout);
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: TitleColorationPainter(
         text: text,
-        textToColor: textToColor,
-        textColor: textColor,
+        textToStyle: textToStyled,
+        searchedTextStyle: searchedTextStyle,
         defaultTextStyleColor: defaultTextStyleColor,
         maxlines: maxlines,
         textDirection: textDirection,
@@ -58,8 +60,8 @@ class TextColorationWidget extends StatelessWidget {
 
 class TitleColorationPainter extends CustomPainter {
   final String text;
-  final String textToColor;
-  final Color textColor;
+  final String textToStyle;
+  final TextStyle searchedTextStyle;
   final TextStyle defaultTextStyleColor;
   final int maxlines;
   final TextDirection textDirection;
@@ -67,8 +69,8 @@ class TitleColorationPainter extends CustomPainter {
   final StrutStyle? strutStyle;
   const TitleColorationPainter({
     required this.text,
-    required this.textToColor,
-    required this.textColor,
+    required this.textToStyle,
+    required this.searchedTextStyle,
     required this.defaultTextStyleColor,
     this.textScaler = TextScaler.noScaling,
     this.strutStyle,
@@ -80,33 +82,7 @@ class TitleColorationPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     List<TextSpan> textsSpanTitle = [];
 
-    List<String> searchWords = textToColor.toLowerCase().split(" ");
-// 2. remove duplicated searchable text
-    searchWords = Set<String>.from(searchWords).toList();
-
-// 3. organize filter by length for more precision
-// and save  existing  filters in title
-    searchWords.sort((a, b) => b.length.compareTo(a.length));
-    searchWords = searchWords
-        .where((searchWord) =>
-            searchWord.trim().isNotEmpty &&
-            text.toLowerCase().contains(searchWord))
-        .map((searchWord) => searchWord.toLowerCase())
-        .toList();
-
-// 4. organize  filters with their position in title
-    searchWords.sort((a, b) =>
-        text.toLowerCase().indexOf(a).compareTo(text.toLowerCase().indexOf(b)));
-    String titleName = text.toLowerCase();
-    searchWords.sort((a, b) {
-      if (searchWords.indexOf(a) > 0) {
-        titleName =
-            titleName.replaceFirst(searchWords[searchWords.indexOf(a) - 1], "");
-      }
-      return (titleName.indexOf(a) == titleName.indexOf(b))
-          ? b.length.compareTo(a.length)
-          : titleName.indexOf(a).compareTo(titleName.indexOf(b));
-    });
+    List<String> searchWords = searchedTextPreparation(textToStyle);
 
     String mtitle = text;
     textsSpanTitle = colorationSpan(mtitle, searchWords);
@@ -137,10 +113,42 @@ class TitleColorationPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant TitleColorationPainter oldDelegate) {
     return text != oldDelegate.text ||
-        textToColor != oldDelegate.textToColor ||
-        textColor != oldDelegate.textColor ||
+        searchedTextStyle.compareTo(oldDelegate.searchedTextStyle) ==
+            RenderComparison.paint ||
+        textToStyle != oldDelegate.textToStyle ||
         maxlines != oldDelegate.maxlines ||
         defaultTextStyleColor != oldDelegate.defaultTextStyleColor;
+  }
+
+  List<String> searchedTextPreparation(String textToStyle) {
+    List<String> searchWords = textToStyle.toLowerCase().split(" ");
+// 2. remove duplicated searchable text
+    searchWords = Set<String>.from(searchWords).toList();
+
+// 3. organize filter by length for more precision
+// and save  existing  filters in title
+    searchWords.sort((a, b) => b.length.compareTo(a.length));
+    searchWords = searchWords
+        .where((searchWord) =>
+            searchWord.trim().isNotEmpty &&
+            text.toLowerCase().contains(searchWord))
+        .map((searchWord) => searchWord.toLowerCase())
+        .toList();
+
+// 4. organize  filters with their position in title
+    searchWords.sort((a, b) =>
+        text.toLowerCase().indexOf(a).compareTo(text.toLowerCase().indexOf(b)));
+    String titleName = text.toLowerCase();
+    searchWords.sort((a, b) {
+      if (searchWords.indexOf(a) > 0) {
+        titleName =
+            titleName.replaceFirst(searchWords[searchWords.indexOf(a) - 1], "");
+      }
+      return (titleName.indexOf(a) == titleName.indexOf(b))
+          ? b.length.compareTo(a.length)
+          : titleName.indexOf(a).compareTo(titleName.indexOf(b));
+    });
+    return searchWords;
   }
 
   List<TextSpan> colorationSpan(
@@ -162,9 +170,7 @@ class TitleColorationPainter extends CustomPainter {
         textsSpanTitle.add(
           TextSpan(
             text: mtitle.substring(0, searchWords.first.length),
-            style: defaultTextStyleColor.copyWith(
-              color: textColor,
-            ),
+            style: searchedTextStyle,
           ),
         );
         mtitle = mtitle.substring(searchWords.first.length);
