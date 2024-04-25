@@ -1,56 +1,77 @@
 library text_coloration;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class TilteColorationWidget extends StatelessWidget {
-  final String title;
+class TextColorationWidget extends StatelessWidget {
+  final String text;
   final String textToColor;
   final Color textColor;
   final TextStyle defaultTextStyleColor;
   final int maxlines;
   final TextDirection textDirection;
-  final Size size;
-  const TilteColorationWidget({
+  final Size? size;
+  final TextScaler? textScaler;
+  final StrutStyle? strutStyle;
+  const TextColorationWidget({
     super.key,
-    required this.title,
+    required this.text,
     required this.textToColor,
     required this.textColor,
     required this.defaultTextStyleColor,
     this.maxlines = 1,
     this.textDirection = TextDirection.ltr,
-    required this.size,
+    this.size,
+    this.textScaler = TextScaler.noScaling,
+    this.strutStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: TitleColorationPainter(
-        title: title,
+        text: text,
         textToColor: textToColor,
         textColor: textColor,
         defaultTextStyleColor: defaultTextStyleColor,
         maxlines: maxlines,
         textDirection: textDirection,
+        textScaler: textScaler ?? MediaQuery.textScalerOf(context),
+        strutStyle: strutStyle ??
+            StrutStyle.fromTextStyle(
+              DefaultTextStyle.of(context).style.merge(defaultTextStyleColor),
+            ),
       ),
       isComplex: true,
       willChange: false,
-      size: size,
+      size: size ?? Size.infinite,
+      child: Text(
+        text,
+        style: defaultTextStyleColor.copyWith(
+          color: Colors.transparent,
+        ),
+        maxLines: maxlines,
+      ),
     );
   }
 }
 
 class TitleColorationPainter extends CustomPainter {
-  final String title;
+  final String text;
   final String textToColor;
   final Color textColor;
   final TextStyle defaultTextStyleColor;
   final int maxlines;
   final TextDirection textDirection;
+  final TextScaler textScaler;
+  final StrutStyle? strutStyle;
   const TitleColorationPainter({
-    required this.title,
+    required this.text,
     required this.textToColor,
     required this.textColor,
     required this.defaultTextStyleColor,
+    this.textScaler = TextScaler.noScaling,
+    this.strutStyle,
     this.maxlines = 1,
     this.textDirection = TextDirection.ltr,
   });
@@ -64,21 +85,19 @@ class TitleColorationPainter extends CustomPainter {
     searchWords = Set<String>.from(searchWords).toList();
 
 // 3. organize filter by length for more precision
-// et save  existing  filters in title
+// and save  existing  filters in title
     searchWords.sort((a, b) => b.length.compareTo(a.length));
     searchWords = searchWords
         .where((searchWord) =>
             searchWord.trim().isNotEmpty &&
-            title.toLowerCase().contains(searchWord))
+            text.toLowerCase().contains(searchWord))
         .map((searchWord) => searchWord.toLowerCase())
         .toList();
 
 // 4. organize  filters with their position in title
-    searchWords.sort((a, b) => title
-        .toLowerCase()
-        .indexOf(a)
-        .compareTo(title.toLowerCase().indexOf(b)));
-    String titleName = title.toLowerCase();
+    searchWords.sort((a, b) =>
+        text.toLowerCase().indexOf(a).compareTo(text.toLowerCase().indexOf(b)));
+    String titleName = text.toLowerCase();
     searchWords.sort((a, b) {
       if (searchWords.indexOf(a) > 0) {
         titleName =
@@ -89,7 +108,48 @@ class TitleColorationPainter extends CustomPainter {
           : titleName.indexOf(a).compareTo(titleName.indexOf(b));
     });
 
-    String mtitle = title;
+    String mtitle = text;
+    textsSpanTitle = colorationSpan(mtitle, searchWords);
+    final mainTitle = TextSpan(
+      //text: textsSpanTitle.first.text,
+      style: textsSpanTitle.first.style!.copyWith(
+        height: 1.0,
+      ),
+      children: textsSpanTitle.toList(),
+    );
+
+    final painter = TextPainter(
+      text: mainTitle,
+      textDirection: textDirection,
+      maxLines: maxlines,
+      ellipsis: "...",
+      textScaler: textScaler,
+      strutStyle: strutStyle,
+      textWidthBasis: TextWidthBasis.longestLine,
+    );
+    painter.layout(
+      minWidth: 0,
+      maxWidth: size.width,
+    );
+    painter.paint(canvas, Offset.zero);
+  }
+
+  @override
+  bool shouldRepaint(covariant TitleColorationPainter oldDelegate) {
+    return text != oldDelegate.text ||
+        textToColor != oldDelegate.textToColor ||
+        textColor != oldDelegate.textColor ||
+        maxlines != oldDelegate.maxlines ||
+        defaultTextStyleColor != oldDelegate.defaultTextStyleColor;
+  }
+
+  List<TextSpan> colorationSpan(
+    String text,
+    List<String> searchedText,
+  ) {
+    final textsSpanTitle = <TextSpan>[];
+    var mtitle = text;
+    var searchWords = List<String>.from(searchedText);
     while (mtitle.isNotEmpty) {
       // 5. delete  filters where their are not exist in the title anymore
       searchWords = searchWords
@@ -108,18 +168,37 @@ class TitleColorationPainter extends CustomPainter {
           ),
         );
         mtitle = mtitle.substring(searchWords.first.length);
-        searchWords.removeAt(0);
+        //searchWords.removeAt(0);
       } else if (searchWords.isNotEmpty &&
-          mtitle.toLowerCase().indexOf(searchWords.first) != 0) {
-        textsSpanTitle.add(
-          TextSpan(
-            text: mtitle.substring(
-                0, mtitle.toLowerCase().indexOf(searchWords.first)),
-            style: defaultTextStyleColor,
-          ),
+          mtitle.toLowerCase().contains(searchWords.first)) {
+        final innerText = mtitle.substring(
+          0,
+          mtitle.toLowerCase().indexOf(searchWords.first),
         );
-        mtitle =
-            mtitle.substring(mtitle.toLowerCase().indexOf(searchWords.first));
+
+        if (searchWords
+            .where((searchWord) => innerText.contains(searchWord))
+            .isNotEmpty) {
+          textsSpanTitle.addAll(
+            colorationSpan(
+              innerText,
+              searchWords,
+            ),
+          );
+        } else {
+          textsSpanTitle.add(
+            TextSpan(
+              text: innerText,
+              style: defaultTextStyleColor,
+            ),
+          );
+        }
+        mtitle = mtitle.substring(
+          mtitle.toLowerCase().indexOf(
+                searchWords.first,
+              ),
+        );
+        debugPrint(mtitle);
       } else {
         textsSpanTitle.add(
           TextSpan(
@@ -130,32 +209,6 @@ class TitleColorationPainter extends CustomPainter {
         mtitle = "";
       }
     }
-    final mainTitle = TextSpan(
-      //text: textsSpanTitle.first.text,
-      style: textsSpanTitle.first.style!.copyWith(
-        height: 1.0,
-      ),
-      children: textsSpanTitle.toList(),
-    );
-    final painter = TextPainter(
-      text: mainTitle,
-      textDirection: textDirection,
-      maxLines: maxlines,
-      ellipsis: "...",
-    );
-    painter.layout(
-      minWidth: 0,
-      maxWidth: size.width,
-    );
-    painter.paint(canvas, Offset.zero);
-  }
-
-  @override
-  bool shouldRepaint(covariant TitleColorationPainter oldDelegate) {
-    return title != oldDelegate.title ||
-        textToColor != oldDelegate.textToColor ||
-        textColor != oldDelegate.textColor ||
-        maxlines != oldDelegate.maxlines ||
-        defaultTextStyleColor != oldDelegate.defaultTextStyleColor;
+    return textsSpanTitle;
   }
 }
