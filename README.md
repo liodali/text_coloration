@@ -17,3 +17,24 @@ Add the following to your `pubspec.yaml` file:
 ## Usage
 
 
+```dart
+        TextColorationWidget(
+              searchedTextStyle: const TextStyle(
+                color: Colors.red,
+                fontWeight: FontWeight.bold,
+              ),
+              textToStyled: "simply dummy text",
+              text:
+                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
+              defaultTextStyleColor: const TextStyle(color: Colors.black),
+              maxlines: 6,
+              //size: Size(double.maxFinite, 48),
+        ),  
+
+
+```
+
+### Preview
+//https://github.com/liodali/text_coloration/blob/main/preview_ios.png
+
+<img src="https://github.com/liodali/text_coloration/blob/main/preview_ios.png" alt="text coloration flutter example"/>
