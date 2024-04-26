@@ -1,7 +1,7 @@
 name: text_coloration
 description: "search part of the text and colored with color"
 version: 0.1.0
-homepage:
+homepage: https://github.com/liodali/text_coloration
 
 environment:
   sdk: '>=3.3.3 <4.0.0'
