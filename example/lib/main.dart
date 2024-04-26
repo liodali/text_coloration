@@ -19,11 +19,52 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: Scaffold(
-        appBar: AppBar(),
-        body: const Center(
-          child: TextColorationExamples(),
-        ),
+      home: const FirstExamplePage(),
+    );
+  }
+}
+
+class FirstExamplePage extends StatefulWidget {
+  const FirstExamplePage({super.key});
+
+  @override
+  State<StatefulWidget> createState() => _StateFirstExample();
+}
+
+class _StateFirstExample extends State<FirstExamplePage> {
+  var index = 0;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(),
+      body: IndexedStack(
+        index: index,
+        children: const [
+          TextColorationExamples(),
+          TextExample(),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: index,
+        onTap: (index) {
+          setState(() {
+            this.index = index;
+          });
+        },
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.color_lens,
+            ),
+            label: "colored texts",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(
+              Icons.text_fields,
+            ),
+            label: "normal texts",
+          ),
+        ],
       ),
     );
   }
@@ -34,12 +75,42 @@ class TextColorationExamples extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return ListView.builder(
+      itemBuilder: (context, _) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: TextColorationWidget(
+            searchedTextStyle: const TextStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.bold,
+            ),
+            textToStyled: "simply dummy text",
+            text:
+                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
+            defaultTextStyleColor: const TextStyle(color: Colors.black),
+            //maxlines: 6,
+          ),
+        );
+      },
+      itemCount: 50,
+      addAutomaticKeepAlives: true,
+      addRepaintBoundaries: false,
+    );
+  }
+}
+
+class TextExample extends StatelessWidget {
+  const TextExample({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          for (var i = 0; i < 20; i++) ...[
-            TextColorationWidget(
+          Padding(
+            padding: const EdgeInsets.only(bottom: 16),
+            child: TextColorationWidget(
               searchedTextStyle: const TextStyle(
                 color: Colors.red,
                 fontWeight: FontWeight.bold,
@@ -48,31 +119,16 @@ class TextColorationExamples extends StatelessWidget {
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
-              //maxlines: 6,
             ),
+          ),
+          for (var i = 0; i < 50; i++) ...[
+            const Text(
+                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"),
             const Text("---"),
             const SizedBox(
               height: 5,
             )
           ],
-          TextColorationWidget(
-            searchedTextStyle: const TextStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.bold,
-            ),
-            textToStyled: "simply dummy text 1500s",
-            text:
-                "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
-            defaultTextStyleColor: const TextStyle(color: Colors.black),
-            //maxlines: 10,
-            //size: Size(double.maxFinite, 60),
-          ),
-          const Text("---"),
-          const SizedBox(
-            height: 5,
-          ),
-          const Text(
-              "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s")
         ],
       ),
     );
