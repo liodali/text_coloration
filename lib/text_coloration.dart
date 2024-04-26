@@ -2,6 +2,11 @@ library text_coloration;
 
 import 'package:flutter/material.dart';
 
+/// [TextColorationWidget]
+///
+/// this widget will stylish a part of a [text] depend on  the text searched
+/// [textToStyled] where will use [searchedTextStyle] to do that
+/// also you should provide the maxlines
 class TextColorationWidget extends StatelessWidget {
   final String text;
   final String textToStyled;
@@ -18,7 +23,7 @@ class TextColorationWidget extends StatelessWidget {
     required this.textToStyled,
     required this.searchedTextStyle,
     required this.defaultTextStyleColor,
-    this.maxlines = 1,
+    this.maxlines = 9199999999,
     this.textDirection = TextDirection.ltr,
     this.size,
     this.textScaler = TextScaler.noScaling,
@@ -31,7 +36,7 @@ class TextColorationWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      painter: TitleColorationPainter(
+      painter: TextColorationPainter(
         text: text,
         textToStyle: textToStyled,
         searchedTextStyle: searchedTextStyle,
@@ -45,8 +50,8 @@ class TextColorationWidget extends StatelessWidget {
             ),
       ),
       isComplex: true,
-      willChange: false,
-      size: size ?? Size.infinite,
+      willChange: true,
+      size: size ?? Size.zero,
       child: Text(
         text,
         style: defaultTextStyleColor.copyWith(
@@ -58,7 +63,7 @@ class TextColorationWidget extends StatelessWidget {
   }
 }
 
-class TitleColorationPainter extends CustomPainter {
+class TextColorationPainter extends CustomPainter {
   final String text;
   final String textToStyle;
   final TextStyle searchedTextStyle;
@@ -67,14 +72,14 @@ class TitleColorationPainter extends CustomPainter {
   final TextDirection textDirection;
   final TextScaler textScaler;
   final StrutStyle? strutStyle;
-  const TitleColorationPainter({
+  const TextColorationPainter({
     required this.text,
     required this.textToStyle,
     required this.searchedTextStyle,
     required this.defaultTextStyleColor,
     this.textScaler = TextScaler.noScaling,
     this.strutStyle,
-    this.maxlines = 1,
+    this.maxlines = 9199999999,
     this.textDirection = TextDirection.ltr,
   });
 
@@ -101,20 +106,20 @@ class TitleColorationPainter extends CustomPainter {
       ellipsis: "...",
       textScaler: textScaler,
       strutStyle: strutStyle,
-      textWidthBasis: TextWidthBasis.longestLine,
     );
     painter.layout(
       minWidth: 0,
       maxWidth: size.width,
     );
+    debugPrint(painter.height.toString());
     painter.paint(canvas, Offset.zero);
   }
 
   @override
-  bool shouldRepaint(covariant TitleColorationPainter oldDelegate) {
+  bool shouldRepaint(covariant TextColorationPainter oldDelegate) {
     return text != oldDelegate.text ||
-        searchedTextStyle.compareTo(oldDelegate.searchedTextStyle) ==
-            RenderComparison.paint ||
+        searchedTextStyle.compareTo(oldDelegate.searchedTextStyle) !=
+            RenderComparison.identical ||
         textToStyle != oldDelegate.textToStyle ||
         maxlines != oldDelegate.maxlines ||
         defaultTextStyleColor != oldDelegate.defaultTextStyleColor;
@@ -204,7 +209,6 @@ class TitleColorationPainter extends CustomPainter {
                 searchWords.first,
               ),
         );
-        debugPrint(mtitle);
       } else {
         textsSpanTitle.add(
           TextSpan(
