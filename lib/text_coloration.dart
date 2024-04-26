@@ -17,6 +17,8 @@ class TextColorationWidget extends StatelessWidget {
   final Size? size;
   final TextScaler? textScaler;
   final StrutStyle? strutStyle;
+  final TextAlign? textAlign;
+  final Locale? locale;
   TextColorationWidget({
     super.key,
     required this.text,
@@ -28,6 +30,8 @@ class TextColorationWidget extends StatelessWidget {
     this.size,
     this.textScaler = TextScaler.noScaling,
     this.strutStyle,
+    this.textAlign,
+    this.locale,
   }) : assert(defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.identical ||
             defaultTextStyleColor.compareTo(searchedTextStyle) !=
@@ -50,6 +54,7 @@ class TextColorationWidget extends StatelessWidget {
             ),
       ),
       isComplex: true,
+      willChange: false,
       size: size ?? Size.zero,
       child: Text(
         text,
@@ -57,6 +62,8 @@ class TextColorationWidget extends StatelessWidget {
           color: Colors.transparent,
         ),
         maxLines: maxlines,
+        textAlign: textAlign,
+        locale: locale,
       ),
     );
   }
@@ -71,6 +78,9 @@ class TextColorationPainter extends CustomPainter {
   final TextDirection textDirection;
   final TextScaler textScaler;
   final StrutStyle? strutStyle;
+
+  final TextAlign? textAlign;
+  final Locale? locale;
   const TextColorationPainter({
     required this.text,
     required this.textToStyle,
@@ -80,6 +90,8 @@ class TextColorationPainter extends CustomPainter {
     this.strutStyle,
     this.maxlines = 9199999999,
     this.textDirection = TextDirection.ltr,
+    this.textAlign,
+    this.locale,
   });
 
   @override
@@ -105,6 +117,8 @@ class TextColorationPainter extends CustomPainter {
       ellipsis: "...",
       textScaler: textScaler,
       strutStyle: strutStyle,
+      locale: locale,
+      textAlign: textAlign ?? TextAlign.start,
     );
     painter.layout(
       minWidth: 0,
@@ -116,12 +130,13 @@ class TextColorationPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant TextColorationPainter oldDelegate) {
-    return text != oldDelegate.text ||
+    return false;
+    /* return text != oldDelegate.text ||
         searchedTextStyle.compareTo(oldDelegate.searchedTextStyle) !=
             RenderComparison.identical ||
         textToStyle != oldDelegate.textToStyle ||
         maxlines != oldDelegate.maxlines ||
-        defaultTextStyleColor != oldDelegate.defaultTextStyleColor;
+        defaultTextStyleColor != oldDelegate.defaultTextStyleColor;*/
   }
 
   List<String> searchedTextPreparation(String textToStyle) {
