@@ -48,8 +48,7 @@ class TextColorationExamples extends StatelessWidget {
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
-              maxlines: 6,
-              //size: Size(double.maxFinite, 48),
+              //maxlines: 6,
             ),
             const Text("---"),
             const SizedBox(
@@ -65,8 +64,8 @@ class TextColorationExamples extends StatelessWidget {
             text:
                 "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
             defaultTextStyleColor: const TextStyle(color: Colors.black),
-            maxlines: 6,
-            //size: Size(double.maxFinite, 48),
+            //maxlines: 10,
+            //size: Size(double.maxFinite, 60),
           ),
           const Text("---"),
           const SizedBox(
