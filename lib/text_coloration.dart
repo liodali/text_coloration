@@ -50,7 +50,6 @@ class TextColorationWidget extends StatelessWidget {
             ),
       ),
       isComplex: true,
-      willChange: true,
       size: size ?? Size.zero,
       child: Text(
         text,
