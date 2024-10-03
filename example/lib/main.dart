@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:text_coloration/text_coloration.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,36 +37,55 @@ class _StateFirstExample extends State<FirstExamplePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: IndexedStack(
-        index: index,
-        children: const [
-          TextColorationExamples(),
-          TextExample(),
-        ],
+      body: SafeArea(
+        child: IndexedStack(
+          index: index,
+          children: const [
+            TextColorationExamples(),
+            TextExample(),
+          ],
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: index,
+      bottomNavigationBar: BottomNav(
+        index: index,
         onTap: (index) {
           setState(() {
             this.index = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.color_lens,
-            ),
-            label: "colored texts",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.text_fields,
-            ),
-            label: "normal texts",
-          ),
-        ],
       ),
+    );
+  }
+}
+
+class BottomNav extends StatelessWidget {
+  final int index;
+  final Function(int) onTap;
+  const BottomNav({
+    super.key,
+    required this.index,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: index,
+      onTap: onTap,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.color_lens,
+          ),
+          label: "colored texts",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            Icons.text_fields,
+          ),
+          label: "normal texts",
+        ),
+      ],
     );
   }
 }
@@ -79,12 +99,12 @@ class TextColorationExamples extends StatelessWidget {
       itemBuilder: (context, _) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 16),
-          child: TextColorationWidget(
+          child: TextColorationWidget.words(
             searchedTextStyle: const TextStyle(
               color: Colors.red,
               fontWeight: FontWeight.bold,
             ),
-            textToStyled: "simply dummy text",
+            wordsToStyled: const ['simply', 'dummy', 'text', 'lorem', 'ipsum'],
             text:
                 "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
             defaultTextStyleColor: const TextStyle(color: Colors.black),
@@ -92,7 +112,7 @@ class TextColorationExamples extends StatelessWidget {
           ),
         );
       },
-      itemCount: 50,
+      itemCount: 150,
       addAutomaticKeepAlives: true,
       addRepaintBoundaries: false,
     );
@@ -109,15 +129,47 @@ class TextExample extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.only(bottom: 16),
-            child: TextColorationWidget(
-              searchedTextStyle: const TextStyle(
-                color: Colors.red,
+            padding: const EdgeInsets.only(
+              bottom: 16,
+            ),
+            child: TextColorationWidget.link(
+              urlTextStyle: const TextStyle(
+                color: Colors.blue,
                 fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.blue,
               ),
-              textToStyled: "simply dummy text",
+              urlAction: () {
+                launchUrl(
+                  Uri.parse('https://pub.dev/packages/text_coloration'),
+                );
+              },
+              url: 'https://pub.dev/packages/text_coloration',
               text:
-                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
+                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry <<https://pub.dev/packages/text_colorations>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
+              defaultTextStyleColor: const TextStyle(color: Colors.black),
+            ),
+          ),
+          const Divider(),
+          Padding(
+            padding: const EdgeInsets.only(
+              bottom: 16,
+            ),
+            child: TextColorationWidget.link(
+              urlTextStyle: const TextStyle(
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+                decorationColor: Colors.blue,
+              ),
+              urlAction: () {
+                launchUrl(
+                  Uri.parse('https://pub.dev/packages/text_coloration'),
+                );
+              },
+              url: 'https://pub.dev/packages/text_coloration',
+              text:
+                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry <<https://pub.dev/packages/text_coloration>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry <<https://pub.dev/packages/text_coloration>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
             ),
           ),

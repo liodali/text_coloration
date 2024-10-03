@@ -1,5 +1,6 @@
 library text_coloration;
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 /// [TextColorationWidget]
@@ -7,140 +8,130 @@ import 'package:flutter/material.dart';
 /// this widget will stylish a part of a [text] depend on  the text searched
 /// [textToStyled] where will use [searchedTextStyle] to do that
 /// also you should provide the maxlines
-class TextColorationWidget extends StatelessWidget {
+class TextColorationWidget extends StatefulWidget {
   final String text;
-  final String textToStyled;
   final TextStyle searchedTextStyle;
   final TextStyle defaultTextStyleColor;
-  final int maxlines;
+  final int? maxlines;
   final TextDirection textDirection;
-  final Size? size;
   final TextScaler? textScaler;
   final StrutStyle? strutStyle;
   final TextAlign? textAlign;
   final Locale? locale;
-  TextColorationWidget({
+  final List<String> _textsToStyled;
+  final VoidCallback? _urlAction;
+  TextColorationWidget.text({
     super.key,
     required this.text,
-    required this.textToStyled,
-    required this.searchedTextStyle,
+    required String textToStyled,
+    required TextStyle wordStyle,
     required this.defaultTextStyleColor,
     this.maxlines = 9199999999,
     this.textDirection = TextDirection.ltr,
-    this.size,
     this.textScaler = TextScaler.noScaling,
     this.strutStyle,
     this.textAlign,
     this.locale,
-  }) : assert(defaultTextStyleColor.compareTo(searchedTextStyle) !=
+  })  : _textsToStyled = [textToStyled.split(' ').first],
+        searchedTextStyle = wordStyle,
+        _urlAction = null,
+        assert(!textToStyled.contains(" "),
+            'use our construtor `.text` instead of default one'),
+        assert(defaultTextStyleColor.compareTo(wordStyle) !=
+                RenderComparison.identical ||
+            defaultTextStyleColor.compareTo(wordStyle) !=
+                RenderComparison.layout);
+  TextColorationWidget.link({
+    super.key,
+    required this.text,
+    required String url,
+    required TextStyle urlTextStyle,
+    required VoidCallback urlAction,
+    required this.defaultTextStyleColor,
+    this.maxlines,
+    this.textDirection = TextDirection.ltr,
+    this.textScaler = TextScaler.noScaling,
+    this.strutStyle,
+    this.textAlign,
+    this.locale,
+  })  : _textsToStyled = [url],
+        searchedTextStyle = urlTextStyle,
+        _urlAction = urlAction,
+        assert(!url.contains(' '),
+            'use our construtor `.text` instead of default one'),
+        assert(defaultTextStyleColor.compareTo(urlTextStyle) !=
+                RenderComparison.identical ||
+            defaultTextStyleColor.compareTo(urlTextStyle) !=
+                RenderComparison.layout);
+  TextColorationWidget.words({
+    super.key,
+    required this.text,
+    required List<String> wordsToStyled,
+    required this.searchedTextStyle,
+    required this.defaultTextStyleColor,
+    this.maxlines,
+    this.textDirection = TextDirection.ltr,
+    this.textScaler = TextScaler.noScaling,
+    this.strutStyle,
+    this.textAlign,
+    this.locale,
+  })  : _textsToStyled = wordsToStyled,
+        _urlAction = null,
+        assert(wordsToStyled.map((e) => e.contains(" ") || e == ' ').isNotEmpty,
+            'words should not contain spaces.'),
+        assert(defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.identical ||
             defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.layout);
 
   @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: TextColorationPainter(
-        text: text,
-        textToStyle: textToStyled,
-        searchedTextStyle: searchedTextStyle,
-        defaultTextStyleColor: defaultTextStyleColor,
-        maxlines: maxlines,
-        textDirection: textDirection,
-        textScaler: textScaler ?? MediaQuery.textScalerOf(context),
-        strutStyle: strutStyle ??
-            StrutStyle.fromTextStyle(
-              DefaultTextStyle.of(context).style.merge(defaultTextStyleColor),
-            ),
-      ),
-      isComplex: true,
-      willChange: false,
-      size: size ?? Size.zero,
-      child: Text(
-        text,
-        style: defaultTextStyleColor.copyWith(
-          color: Colors.transparent,
-        ),
-        maxLines: maxlines,
-        textAlign: textAlign,
-        locale: locale,
-      ),
-    );
-  }
+  State<StatefulWidget> createState() => _TextColorationState();
 }
 
-class TextColorationPainter extends CustomPainter {
-  final String text;
-  final String textToStyle;
-  final TextStyle searchedTextStyle;
-  final TextStyle defaultTextStyleColor;
-  final int maxlines;
-  final TextDirection textDirection;
-  final TextScaler textScaler;
-  final StrutStyle? strutStyle;
-
-  final TextAlign? textAlign;
-  final Locale? locale;
-  const TextColorationPainter({
-    required this.text,
-    required this.textToStyle,
-    required this.searchedTextStyle,
-    required this.defaultTextStyleColor,
-    this.textScaler = TextScaler.noScaling,
-    this.strutStyle,
-    this.maxlines = 9199999999,
-    this.textDirection = TextDirection.ltr,
-    this.textAlign,
-    this.locale,
-  });
+class _TextColorationState extends State<TextColorationWidget> {
+  late List<String> searchedText;
+  late List<TextSpan> spans;
+  @override
+  void initState() {
+    super.initState();
+    searchedText = widget._textsToStyled.length == 1
+        ? widget._textsToStyled
+        : searchedTextPreparation(widget.text, widget._textsToStyled);
+    spans = colorationSpan(widget.text, searchedText);
+  }
 
   @override
-  void paint(Canvas canvas, Size size) {
-    List<TextSpan> textsSpanTitle = [];
+  void didUpdateWidget(covariant TextColorationWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget._textsToStyled != widget._textsToStyled ||
+        oldWidget.text != widget.text) {
+      searchedText = widget._textsToStyled.length == 1
+          ? widget._textsToStyled
+          : searchedTextPreparation(widget.text, widget._textsToStyled);
+      setState(() {
+        spans = colorationSpan(widget.text, searchedText);
+      });
+    }
+  }
 
-    List<String> searchWords = searchedTextPreparation(textToStyle);
-
-    String mtitle = text;
-    textsSpanTitle = colorationSpan(mtitle, searchWords);
-    final mainTitle = TextSpan(
-      //text: textsSpanTitle.first.text,
-      style: textsSpanTitle.first.style!.copyWith(
-        height: 1.0,
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: spans,
       ),
-      children: textsSpanTitle.toList(),
+      textAlign: widget.textAlign,
+      textDirection: widget.textDirection,
+      style: widget.defaultTextStyleColor,
+      maxLines: widget.maxlines,
+      locale: widget.locale,
+      textScaler: widget.textScaler,
     );
-
-    final painter = TextPainter(
-      text: mainTitle,
-      textDirection: textDirection,
-      maxLines: maxlines,
-      ellipsis: "...",
-      textScaler: textScaler,
-      strutStyle: strutStyle,
-      locale: locale,
-      textAlign: textAlign ?? TextAlign.start,
-    );
-    painter.layout(
-      minWidth: 0,
-      maxWidth: size.width,
-    );
-    debugPrint(painter.height.toString());
-    painter.paint(canvas, Offset.zero);
   }
 
-  @override
-  bool shouldRepaint(covariant TextColorationPainter oldDelegate) {
-    return false;
-    /* return text != oldDelegate.text ||
-        searchedTextStyle.compareTo(oldDelegate.searchedTextStyle) !=
-            RenderComparison.identical ||
-        textToStyle != oldDelegate.textToStyle ||
-        maxlines != oldDelegate.maxlines ||
-        defaultTextStyleColor != oldDelegate.defaultTextStyleColor;*/
-  }
-
-  List<String> searchedTextPreparation(String textToStyle) {
-    List<String> searchWords = textToStyle.toLowerCase().split(" ");
+  List<String> searchedTextPreparation(String text, List<String> textToStyle) {
+    List<String> searchWords =
+        List.from(textToStyle); // textToStyle.toLowerCase().split(" ");
 // 2. remove duplicated searchable text
     searchWords = Set<String>.from(searchWords).toList();
 
@@ -189,7 +180,11 @@ class TextColorationPainter extends CustomPainter {
         textsSpanTitle.add(
           TextSpan(
             text: mtitle.substring(0, searchWords.first.length),
-            style: searchedTextStyle,
+            style: widget.searchedTextStyle,
+            mouseCursor:
+                widget._urlAction != null ? SystemMouseCursors.click : null,
+            recognizer: TapGestureRecognizer()
+              ..onTap = () => widget._urlAction?.call(),
           ),
         );
         mtitle = mtitle.substring(searchWords.first.length);
@@ -214,7 +209,7 @@ class TextColorationPainter extends CustomPainter {
           textsSpanTitle.add(
             TextSpan(
               text: innerText,
-              style: defaultTextStyleColor,
+              style: widget.defaultTextStyleColor,
             ),
           );
         }
@@ -227,7 +222,7 @@ class TextColorationPainter extends CustomPainter {
         textsSpanTitle.add(
           TextSpan(
             text: mtitle.substring(0),
-            style: defaultTextStyleColor,
+            style: widget.defaultTextStyleColor,
           ),
         );
         mtitle = "";
