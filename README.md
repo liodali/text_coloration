@@ -1,6 +1,6 @@
 ## text_coloration
 
-![pub](https://img.shields.io/badge/pub-v0.2.0-orange)
+![pub](https://img.shields.io/badge/pub-v0.2.0%2B1-orange)
 
 ## Getting started
 
@@ -12,11 +12,11 @@ Flutter Package: To Search part of the text and colored with color(it can be use
 Add the following to your `pubspec.yaml` file:
 
     dependencies:
-      text_coloration: ^0.2.0
+      text_coloration: ^0.2.0+1
 
 ## Usage
 
-* text
+* words
 
 ```dart
         TextColorationWidget.words(
@@ -28,8 +28,7 @@ Add the following to your `pubspec.yaml` file:
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
-              maxlines: 6,
-              //size: Size(double.maxFinite, 48),
+
         ),  
 
 
@@ -46,8 +45,6 @@ Add the following to your `pubspec.yaml` file:
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
-              maxlines: 6,
-              //size: Size(double.maxFinite, 48),
         ),  
 
 
@@ -71,8 +68,6 @@ Add the following to your `pubspec.yaml` file:
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry<<https://pub.dev/packages/text_coloration>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
-              maxlines: 6,
-              //size: Size(double.maxFinite, 48),
         ),  
 
 
