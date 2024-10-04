@@ -23,23 +23,20 @@ class TextColorationWidget extends StatefulWidget {
   TextColorationWidget.text({
     super.key,
     required this.text,
-    required String textToStyled,
-    required TextStyle wordStyle,
+    required String textToBeStyled,
+    required this.searchedTextStyle,
     required this.defaultTextStyleColor,
-    this.maxlines = 9199999999,
+    this.maxlines,
     this.textDirection = TextDirection.ltr,
     this.textScaler = TextScaler.noScaling,
     this.strutStyle,
     this.textAlign,
     this.locale,
-  })  : _textsToStyled = [textToStyled.split(' ').first],
-        searchedTextStyle = wordStyle,
+  })  : _textsToStyled = textToBeStyled.split(' '),
         _urlAction = null,
-        assert(!textToStyled.contains(" "),
-            'use our construtor `.text` instead of default one'),
-        assert(defaultTextStyleColor.compareTo(wordStyle) !=
+        assert(defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.identical ||
-            defaultTextStyleColor.compareTo(wordStyle) !=
+            defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.layout);
   TextColorationWidget.link({
     super.key,
@@ -66,7 +63,7 @@ class TextColorationWidget extends StatefulWidget {
   TextColorationWidget.words({
     super.key,
     required this.text,
-    required List<String> wordsToStyled,
+    required List<String> words,
     required this.searchedTextStyle,
     required this.defaultTextStyleColor,
     this.maxlines,
@@ -75,9 +72,9 @@ class TextColorationWidget extends StatefulWidget {
     this.strutStyle,
     this.textAlign,
     this.locale,
-  })  : _textsToStyled = wordsToStyled,
+  })  : _textsToStyled = words,
         _urlAction = null,
-        assert(wordsToStyled.map((e) => e.contains(" ") || e == ' ').isNotEmpty,
+        assert(words.map((e) => e.contains(" ") || e == ' ').isNotEmpty,
             'words should not contain spaces.'),
         assert(defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.identical ||

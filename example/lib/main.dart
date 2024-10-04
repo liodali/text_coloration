@@ -104,7 +104,7 @@ class TextColorationExamples extends StatelessWidget {
               color: Colors.red,
               fontWeight: FontWeight.bold,
             ),
-            wordsToStyled: const ['simply', 'dummy', 'text', 'lorem', 'ipsum'],
+            words: const ['simply', 'dummy', 'text', 'lorem', 'ipsum'],
             text:
                 "Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
             defaultTextStyleColor: const TextStyle(color: Colors.black),
