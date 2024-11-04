@@ -38,12 +38,12 @@ class TextColorationWidget extends StatefulWidget {
                 RenderComparison.identical ||
             defaultTextStyleColor.compareTo(searchedTextStyle) !=
                 RenderComparison.layout);
-  TextColorationWidget.link({
+  TextColorationWidget.action({
     super.key,
     required this.text,
-    required String url,
+    required String textToBeStyled,
     required TextStyle urlTextStyle,
-    required VoidCallback urlAction,
+    required VoidCallback onTap,
     required this.defaultTextStyleColor,
     this.maxlines,
     this.textDirection = TextDirection.ltr,
@@ -51,11 +51,9 @@ class TextColorationWidget extends StatefulWidget {
     this.strutStyle,
     this.textAlign,
     this.locale,
-  })  : _textsToStyled = [url],
+  })  : _textsToStyled = [textToBeStyled],
         searchedTextStyle = urlTextStyle,
-        _urlAction = urlAction,
-        assert(!url.contains(' '),
-            'use our construtor `.text` instead of default one'),
+        _urlAction = onTap,
         assert(defaultTextStyleColor.compareTo(urlTextStyle) !=
                 RenderComparison.identical ||
             defaultTextStyleColor.compareTo(urlTextStyle) !=

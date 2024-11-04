@@ -132,19 +132,19 @@ class TextExample extends StatelessWidget {
             padding: const EdgeInsets.only(
               bottom: 16,
             ),
-            child: TextColorationWidget.link(
+            child: TextColorationWidget.action(
               urlTextStyle: const TextStyle(
                 color: Colors.blue,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline,
                 decorationColor: Colors.blue,
               ),
-              urlAction: () {
+              onTap: () {
                 launchUrl(
                   Uri.parse('https://pub.dev/packages/text_coloration'),
                 );
               },
-              url: 'https://pub.dev/packages/text_coloration',
+              textToBeStyled: 'https://pub.dev/packages/text_coloration',
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry <<https://pub.dev/packages/text_colorations>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
@@ -155,19 +155,19 @@ class TextExample extends StatelessWidget {
             padding: const EdgeInsets.only(
               bottom: 16,
             ),
-            child: TextColorationWidget.link(
+            child: TextColorationWidget.action(
               urlTextStyle: const TextStyle(
                 color: Colors.blue,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline,
                 decorationColor: Colors.blue,
               ),
-              urlAction: () {
+              onTap: () {
                 launchUrl(
                   Uri.parse('https://pub.dev/packages/text_coloration'),
                 );
               },
-              url: 'https://pub.dev/packages/text_coloration',
+              textToBeStyled: 'https://pub.dev/packages/text_coloration',
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry <<https://pub.dev/packages/text_coloration>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry <<https://pub.dev/packages/text_coloration>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
