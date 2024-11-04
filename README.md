@@ -1,6 +1,6 @@
 ## text_coloration
 
-![pub](https://img.shields.io/badge/pub-v0.2.0%2B1-orange)
+![pub](https://img.shields.io/badge/pub-v0.3.0-orange)
 
 ## Getting started
 
@@ -12,7 +12,7 @@ Flutter Package: To Search part of the text and colored with color(it can be use
 Add the following to your `pubspec.yaml` file:
 
     dependencies:
-      text_coloration: ^0.2.0+1
+      text_coloration: ^0.3.0
 
 ## Usage
 
@@ -52,19 +52,19 @@ Add the following to your `pubspec.yaml` file:
 * link
 
 ```dart
-        TextColorationWidget.link(
+        TextColorationWidget.action(
               urlTextStyle: const TextStyle(
                 color: Colors.blue,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline,
                 decorationColor: Colors.blue,
               ),
-              urlAction: () {
+              onTap: () {
                 launchUrl(
                   Uri.parse('https://pub.dev/packages/text_coloration'),
                 );
               },
-              url: 'https://pub.dev/packages/text_coloration',
+              textToBeStyled: 'https://pub.dev/packages/text_coloration',
               text:
                   "Lorem Ipsum is simply dummy text of the printing and typesetting industry<<https://pub.dev/packages/text_coloration>>.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum has been the industry's standard dummy text ever since the 1500s ",
               defaultTextStyleColor: const TextStyle(color: Colors.black),
